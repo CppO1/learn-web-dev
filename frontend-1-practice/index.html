@@ -7,20 +7,138 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!--
-      ЗАДАНИЕ
-      ========
-      Сверстать страницу выбора даты и времени по своему макету.
-
-      Пока это только вёрстка. Никакого JavaScript — ни кликов,
-      ни переходов, ни выбора дня. Всё статично.
-
-      Стили пишите в styles.css. Разметку — здесь.
-    -->
 
     <div class="page">
-      <!-- Начните отсюда. Разметьте шапку, основную область
-           с календарём и слотами, подвал. -->
+      <!--header-->
+      <header class="header">
+        <div class="logo">
+          <span class="logo-text">BARBBOSS</span>
+        </div>
+        <nav class="nav-links">
+          <div class="nav-link active">
+            <a href="#">Услуги</a>
+          </div>
+          <div class="nav-link"><a href="#">Галерея</a></div>
+          <div class="nav-link"><a href="#">Команда</a></div>
+          <div class="nav-link"><a href="#">Отзывы</a></div>
+          <div class="nav-link"><a href="#">Контакты</a></div>
+        </nav>
+      </header>
+
+      <!-- main -->
+      <main class="main-booking-flow">
+  <h1 class="booking-title">Выберите желаемое время</h1>
+
+  <div class="booking-cards">
+    
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <span class="calendar-month">Июнь 2025</span>
+        <div class="calendar-nav">
+          <button class="nav-arrow">‹</button>
+          <button class="nav-arrow">›</button>
+        </div>
+      </div>
+
+      <div class="calendar-weekdays">
+        <span>Пн</span><span>Вт</span><span>Ср</span>
+        <span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+      </div>
+
+      <div class="calendar-grid">
+
+        <span class="day muted">26</span>
+        <span class="day muted">27</span>
+        <span class="day muted">28</span>
+        <span class="day muted">29</span>
+        <span class="day muted">30</span>
+        <span class="day muted">31</span>
+        <span class="day muted">1</span>
+
+        <span class="day">2</span>
+        <span class="day selected">3</span>
+        <span class="day">4</span>
+        <span class="day">5</span>
+        <span class="day">6</span>
+        <span class="day">7</span>
+        <span class="day">8</span>
+
+        <span class="day">9</span>
+        <span class="day">10</span>
+        <span class="day">11</span>
+        <span class="day">12</span>
+        <span class="day">13</span>
+        <span class="day">14</span>
+        <span class="day">15</span>
+
+        <span class="day">16</span>
+        <span class="day">17</span>
+        <span class="day">18</span>
+        <span class="day">19</span>
+        <span class="day">20</span>
+        <span class="day">21</span>
+        <span class="day">22</span>
+      </div>
+    </div>
+
+    <div class="time-card">
+      <span class="time-title">Доступное время</span>
+
+      <div class="time-grid">
+        <button class="time-slot">10:00</button>
+        <button class="time-slot disabled">11:00</button>
+
+        <button class="time-slot">12:00</button>
+        <button class="time-slot disabled">13:00</button>
+
+        <button class="time-slot">14:00</button>
+        <button class="time-slot">15:00</button>
+
+        <button class="time-slot">16:00</button>
+        <button class="time-slot">17:00</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="confirm-row">
+    <span class="confirm-text">Подтвердите выбранное время :</span>
+    <button class="confirm-btn">Далее</button>
+  </div>
+</main>
+
+      <!--footer-->
+      <footer class = "footer">
+        <div class="footer-top">
+          <div class="footer-brand"></din>
+            <span class="brand-name">BARBBOSS</span>
+            <span class = "brand-desc"
+            >Все виды парикмахерских услуг для мужчин всех возрастов</span>
+      
+            </div>
+            <div class="footer-contact">
+              <div class="contact-col">
+                <span class = "col-title">Контакты</span>
+                <a href = "#">ул. Садовая, 15, Москва</a>
+                <a href = "#">+7 (495) 123-45-67</a>
+              </div>
+            </div>
+            <div class="footer-rasp">
+              <div class="rasp-col">
+                <span class = "col-title">Режим работы</span>
+                <a href = "#">Пн–Пт: 9:00 - 21:00</a>
+                <a href = "#">Сб-Вс: 10:00 - 19:00</a>
+              </div>
+            </div>
+          </div>
+          <div class="footer-line"></div>
+          <div class="footer-bottom">
+            <span class="copy"
+              >© 2026. Все права защищены.</span>
+            <span class="legal"
+              >Политика конфиденциальности</span>
+          </div>
+      </footer>
     </div>
   </body>
 </html>
