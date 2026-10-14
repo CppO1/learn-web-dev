@@ -3,16 +3,20 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+body {
+  min-height: 100vh;
+  font-family:"Arial", sans-serif;
+}
+
 .page{
   display: flex;
   flex-direction:column;
   min-height: 100vh;
   background: #FFFFFF;
-  width: 1024px;
-}
-body {
-  min-height: 100vh;
-  font-family:"Arial", sans-serif;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .header {
@@ -21,9 +25,10 @@ body {
   justify-content: space-between;
   align-items: center ;
   padding: 15px 48px;
-  height: 82px;
+  min-height: 82px;
   background: #FFFFFF;
   border-bottom: 1px solid #D5D5D5;
+  flex-wrap: wrap;
 }
 
 .logo-text{
@@ -75,6 +80,7 @@ body {
   flex-direction:row;
   gap: 20px;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .calendar-card,
@@ -86,7 +92,7 @@ body {
 }
 
 .calendar-card {
-  flex: 0 0 450px;
+  flex: 1 1 450px;
 }
 
 .calendar-header {
@@ -150,7 +156,19 @@ body {
   color: #222222;
   border-radius: 50%;
   cursor: pointer;
+
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
 }
+
+.calendar-grid .day:focus-visible {
+  outline: 2px solid #4f5d50;
+  outline-offset: 2px;
+}
+
+
 
 .calendar-grid .day:hover {
   background: #f0f0f0;
@@ -167,9 +185,7 @@ body {
 }
 
 .time-card {
-  flex: 1;
-  min-width: 320px;
-  height: 340px;
+  flex: 1 1 320px;
 }
 
 .time-title {
@@ -203,7 +219,7 @@ body {
   border-color: #d5d5d5;
 }
 
-.time-slot.disabled {
+.time-slot:disabled {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -214,15 +230,20 @@ body {
   border-color: #e7e7e7;
 }
 
-.time-slot.disabled:hover {
+.time-slot:disabled:hover {
   background: #f5f5f5;
   border-color: #e7e7e7;
 }
 
-.time-slot.disabled span {
+.time-slot:disabled span {
   font-size: 10px;
   line-height: 12px;
   color: #c9c4be;
+}
+
+.time-slot:focus-visible {
+  outline: 2px solid #4f5d50;
+  outline-offset: 2px;
 }
 
 .confirm-row {
@@ -238,6 +259,7 @@ body {
   line-height: 24px;
   font-weight: 700;
   color: #222222;
+  
 }
 
 .confirm-btn {
@@ -354,4 +376,145 @@ body {
   line-height: 16px;
   color: #a7a3a7;
   margin-left: 20px;
+}
+
+
+@media (max-width: 900px) {
+  .main-booking-flow {
+    padding: 24px;
+  }
+
+  .booking-cards {
+    flex-direction: column;
+  }
+
+  .calendar-card {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .time-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .footer-top,
+  .footer-contact {
+    gap: 32px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .main-booking-flow {
+    padding: 20px 16px 40px;
+    gap: 20px;
+  }
+
+  .booking-title {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .calendar-card,
+  .time-card {
+    padding: 16px;
+  }
+
+  .calendar-grid .day {
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .confirm-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.confirm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.confirm-label {
+  font-size: 13px;
+  line-height: 18px;
+  color: #6b6661;
+}
+
+.confirm-value {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #222222;
+}
+
+.confirm-btn {
+  padding: 16px 80px;
+  background: #222222;
+  color: #ffffff;
+  border: none;
+  border-radius: 100px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.confirm-btn:hover {
+  background: #000000;
+}
+
+.confirm-btn:focus-visible {
+  outline: 2px solid #4f5d50;
+  outline-offset: 2px;
+}
+
+  .footer {
+    padding: 40px 16px;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-contact {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .footer-brand .brand-desc {
+    max-width: 100%;
+  }
 }
