@@ -7,8 +7,92 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+
     <div class="page">
-      <!-- Перенесите вашу верстку. Удалите статичные данные. Подключите скрипт -->
+      <!--header-->
+      <header class="header">
+        <div class="logo">
+          <span class="logo-text">BARBBOSS</span>
+        </div>
+        <nav class="nav-links">
+          <div class="nav-link active">
+            <a href="#">Услуги</a>
+          </div>
+          <div class="nav-link"><a href="#">Галерея</a></div>
+          <div class="nav-link"><a href="#">Команда</a></div>
+          <div class="nav-link"><a href="#">Отзывы</a></div>
+          <div class="nav-link"><a href="#">Контакты</a></div>
+        </nav>
+      </header>
+
+      <!-- main -->
+      <main class="main-booking-flow">
+        <h1 class="booking-title">Выберите желаемое время</h1>
+
+        <div class="booking-cards">
+          
+          <div class="calendar-card">
+            <div class="calendar-header">
+              <span class="calendar-month" id="calendarMonthTitle">Июнь 2025</span>
+              <div class="calendar-nav">
+                <button class="nav-arrow" id="prevMonth">‹</button>
+                <button class="nav-arrow" id="nextMonth">›</button>
+              </div>
+            </div>
+
+            <div class="calendar-weekdays">
+              <span>Пн</span><span>Вт</span><span>Ср</span>
+              <span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </div>
+
+          <div class="time-card">
+            <span class="time-title">Доступное время</span>
+            <div class="time-grid" id="timeGrid"></div>
+          </div>
+
+        </div>
+
+        <div class="confirm-row">
+          <div class="confirm-info">
+            <span class="confirm-label" id="confirmText">Выберите дату и время</span>
+          </div>
+          <button type="button" class="confirm-btn">Далее</button>
+        </div>
+      </main>
+
+      <!--footer-->
+      <footer class="footer">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <span class="brand-name">BARBBOSS</span>
+            <span class="brand-desc">Все виды парикмахерских услуг для мужчин всех возрастов</span>
+          </div>
+          <div class="footer-contact">
+            <div class="contact-col">
+              <span class="col-title">Контакты</span>
+              <a href="#">ул. Садовая, 15, Москва</a>
+              <a href="#">+7 (495) 123-45-67</a>
+            </div>
+          </div>
+          <div class="footer-rasp">
+            <div class="rasp-col">
+              <span class="col-title">Режим работы</span>
+              <a href="#">Пн–Пт: 9:00 - 21:00</a>
+              <a href="#">Сб-Вс: 10:00 - 19:00</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-line"></div>
+        <div class="footer-bottom">
+          <span class="copy">© 2026. Все права защищены.</span>
+          <span class="legal">Политика конфиденциальности</span>
+        </div>
+      </footer>
     </div>
+
+    <script src="script.js"></script>
   </body>
 </html>
