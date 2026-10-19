@@ -53,6 +53,7 @@ import Footer from "./components/Footer";
 import Calendar from "./components/Calendar";
 import TimeSlots from "./components/TimeSlots";
 import BottomBar from "./components/BottomBar";
+import { isDateSelectable } from "./utils/date";
 
 const SLOTS = [
   { time: "10:00", available: true },
@@ -67,31 +68,45 @@ const SLOTS = [
 
 function App() {
   const now = new Date();
-
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [selectedDay, setSelectedDay] = useState(now.getDate());
   const [selectedTime, setSelectedTime] = useState(null);
+  const [slots, setSlots] = useState(SLOTS);
 
-  const handlePrevMonth = () => {
-    let newMonth = currentMonth - 1;
+  // Функция для смены месяца с правильным сбросом дня
+  const changeMonth = (delta) => {
+    let newMonth = currentMonth + delta;
     let newYear = currentYear;
-    if (newMonth < 0) { newMonth = 11; newYear -= 1; }
+    
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear -= 1;
+    } else if (newMonth > 11) {
+      newMonth = 0;
+      newYear += 1;
+    }
+
+    // Ищем первый доступный день в новом месяце
+    let newSelectedDay = null;
+    const daysInNewMonth = new Date(newYear, newMonth + 1, 0).getDate();
+    
+    for (let d = 1; d <= daysInNewMonth; d++) {
+      if (isDateSelectable(d, newMonth, newYear)) {
+        newSelectedDay = d;
+        break;
+      }
+    }
+
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
-    setSelectedDay(null);
-    setSelectedTime(null);
+    setSelectedDay(newSelectedDay); 
+    setSelectedTime(null);          
+    setSlots(SLOTS);                
   };
 
-  const handleNextMonth = () => {
-    let newMonth = currentMonth + 1;
-    let newYear = currentYear;
-    if (newMonth > 11) { newMonth = 0; newYear += 1; }
-    setCurrentMonth(newMonth);
-    setCurrentYear(newYear);
-    setSelectedDay(null);
-    setSelectedTime(null);
-  };
+  const handlePrevMonth = () => changeMonth(-1);
+  const handleNextMonth = () => changeMonth(1);
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
@@ -107,6 +122,7 @@ function App() {
       <Header />
       <main className="main-booking-flow">
         <h1 className="booking-title">Выберите желаемое время</h1>
+        
         <div className="booking-cards">
           <Calendar
             year={currentYear}
@@ -117,7 +133,7 @@ function App() {
             onNextMonth={handleNextMonth}
           />
           <TimeSlots
-            slots={SLOTS}
+            slots={slots}
             selectedDay={selectedDay}
             selectedTime={selectedTime}
             currentMonth={currentMonth}
@@ -125,6 +141,7 @@ function App() {
             onTimeClick={handleTimeClick}
           />
         </div>
+
         <BottomBar
           selectedDay={selectedDay}
           selectedTime={selectedTime}

@@ -54,6 +54,7 @@ import Calendar from "./components/Calendar";
 import TimeSlots from "./components/TimeSlots";
 import BottomBar from "./components/BottomBar";
 import { fetchToday, fetchSlots } from "./api";
+import { compareDates } from "./utils/date"; 
 
 function App() {
   // Данные с сервера
@@ -125,30 +126,48 @@ function App() {
     };
   }, [selectedDay, currentMonth, currentYear, today]);
 
-  // Обработчики навигации
-  const handlePrevMonth = () => {
-    let newMonth = currentMonth - 1;
+  // 3. ЕДИНАЯ ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ МЕСЯЦЕВ 
+  const changeMonth = (delta) => {
+    let newMonth = currentMonth + delta;
     let newYear = currentYear;
+    
     if (newMonth < 0) {
       newMonth = 11;
       newYear -= 1;
-    }
-    setCurrentMonth(newMonth);
-    setCurrentYear(newYear);
-    setSelectedDay(null);
-  };
-
-  const handleNextMonth = () => {
-    let newMonth = currentMonth + 1;
-    let newYear = currentYear;
-    if (newMonth > 11) {
+    } else if (newMonth > 11) {
       newMonth = 0;
       newYear += 1;
     }
+
+    // Находим первый доступный день в новом месяце 
+    const todayDate = new Date(today.year, today.month, today.day);
+    const daysInNewMonth = new Date(newYear, newMonth + 1, 0).getDate();
+    
+    let firstAvailableDay = null;
+    for (let d = 1; d <= daysInNewMonth; d++) {
+      const dateToCheck = new Date(newYear, newMonth, d);
+      // Если день не в прошлом, он доступен
+      if (compareDates(dateToCheck, todayDate) >= 0) {
+        firstAvailableDay = d;
+        break;
+      }
+    }
+
+    // Применяем новые значения
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
-    setSelectedDay(null);
+    
+    // Сбрасываем день 
+    setSelectedDay(firstAvailableDay);
+    
+    // Сбрасываем время и слоты
+    setSelectedTime(null);
+    setSlots([]);
   };
+
+  // Обработчики  вызывают changeMonth
+  const handlePrevMonth = () => changeMonth(-1);
+  const handleNextMonth = () => changeMonth(1);
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
