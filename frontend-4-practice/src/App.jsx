@@ -47,11 +47,173 @@
 //
 // Ниже — пустой каркас. Здесь можно начать писать.
 
+import { useState, useEffect } from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Calendar from "./components/Calendar";
+import TimeSlots from "./components/TimeSlots";
+import BottomBar from "./components/BottomBar";
+import { fetchToday, fetchSlots } from "./api";
+
 function App() {
+  // Данные с сервера
+  const [today, setToday] = useState(null); 
+  const [slots, setSlots] = useState([]);   
+
+  // Состояния календаря 
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  // Флаги загрузки и ошибок
+  const [loadingToday, setLoadingToday] = useState(true);
+  const [errorToday, setErrorToday] = useState(null);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [errorSlots, setErrorSlots] = useState(null);
+
+  // 1. Загрузка сегодняшнег дня при открытии страницы
+  useEffect(() => {
+    fetchToday()
+      .then((data) => {
+        setToday(data);
+        // Устанавливает календарь на сегодняшний месяц
+        setCurrentMonth(data.month);
+        setCurrentYear(data.year);
+        setSelectedDay(data.day);
+        setErrorToday(null);
+      })
+      .catch((err) => {
+        setErrorToday(err.message);
+      })
+      .finally(() => {
+        setLoadingToday(false);
+      });
+  }, []);
+
+  // 2. Загрузка слотов при изменении выбранного дня
+  useEffect(() => {
+    // Если день не выбран или сегодня еще не пришло - ждем
+    if (selectedDay === null || today === null) return;
+
+    let isCancelled = false; // Защита от гонок
+
+    setLoadingSlots(true);
+    setErrorSlots(null);
+    setSelectedTime(null); // Сбрасывает время при смене дня
+
+    const dateToFetch = { day: selectedDay, month: currentMonth, year: currentYear };
+
+    fetchSlots(dateToFetch)
+      .then((data) => {
+        if (isCancelled) return;
+        // Проверяем, что ответ относится к нужному дню
+        if (data.date.day !== selectedDay || data.date.month !== currentMonth) return;
+        
+        setSlots(data.slots);
+      })
+      .catch((err) => {
+        if (!isCancelled) setErrorSlots(err.message);
+      })
+      .finally(() => {
+        if (!isCancelled) setLoadingSlots(false);
+      });
+
+    // Функция очистки при выборе другого дня
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedDay, currentMonth, currentYear, today]);
+
+  // Обработчики навигации
+  const handlePrevMonth = () => {
+    let newMonth = currentMonth - 1;
+    let newYear = currentYear;
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear -= 1;
+    }
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+    setSelectedDay(null);
+  };
+
+  const handleNextMonth = () => {
+    let newMonth = currentMonth + 1;
+    let newYear = currentYear;
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear += 1;
+    }
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+    setSelectedDay(null);
+  };
+
+  const handleDayClick = (day) => {
+    setSelectedDay(day);
+  };
+
+  const handleTimeClick = (time) => {
+    setSelectedTime(time);
+  };
+
+  // Заглушка при прогрузке сегодня
+  if (loadingToday) {
+    return (
+      <div className="page" style={{ padding: '40px', textAlign: 'center' }}>
+        <h2>Загрузка...</h2>
+      </div>
+    );
+  }
+
+  // Если произошла ошибка при загрузке сегодня
+  if (errorToday) {
+    return (
+      <div className="page" style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
+        <h2>Ошибка: {errorToday}</h2>
+        <button onClick={() => window.location.reload()} style={{ marginTop: '20px', padding: '10px 20px' }}>
+          Попробовать снова
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {/* Начните отсюда. Например, разметьте .page, добавьте шапку,
-            основную область, подвал. */}
+    <div className="page">
+      <Header />
+      <main className="main-booking-flow">
+        <h1 className="booking-title">Выберите желаемое время</h1>
+        
+        <div className="booking-cards">
+          <Calendar
+            year={currentYear}
+            month={currentMonth}
+            selectedDay={selectedDay}
+            today={today}
+            onDayClick={handleDayClick}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+          />
+          
+          <TimeSlots
+            slots={slots}
+            loading={loadingSlots}
+            error={errorSlots}
+            selectedDay={selectedDay}
+            selectedTime={selectedTime}
+            onTimeClick={handleTimeClick}
+          />
+        </div>
+
+        <BottomBar
+          selectedDay={selectedDay}
+          selectedTime={selectedTime}
+          currentMonth={currentMonth}
+          currentYear={currentYear}
+        />
+      </main>
+      <Footer />
     </div>
   );
 }
