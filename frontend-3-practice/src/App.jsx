@@ -47,11 +47,92 @@
 //
 // Ниже — пустой каркас. Здесь можно начать писать.
 
+import { useState } from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Calendar from "./components/Calendar";
+import TimeSlots from "./components/TimeSlots";
+import BottomBar from "./components/BottomBar";
+
+const SLOTS = [
+  { time: "10:00", available: true },
+  { time: "11:00", available: false },
+  { time: "12:00", available: true },
+  { time: "13:00", available: false },
+  { time: "14:00", available: true },
+  { time: "15:00", available: true },
+  { time: "16:00", available: true },
+  { time: "17:00", available: true },
+];
+
 function App() {
+  const now = new Date();
+
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth());
+  const [currentYear, setCurrentYear] = useState(now.getFullYear());
+  const [selectedDay, setSelectedDay] = useState(now.getDate());
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  const handlePrevMonth = () => {
+    let newMonth = currentMonth - 1;
+    let newYear = currentYear;
+    if (newMonth < 0) { newMonth = 11; newYear -= 1; }
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+    setSelectedDay(null);
+    setSelectedTime(null);
+  };
+
+  const handleNextMonth = () => {
+    let newMonth = currentMonth + 1;
+    let newYear = currentYear;
+    if (newMonth > 11) { newMonth = 0; newYear += 1; }
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+    setSelectedDay(null);
+    setSelectedTime(null);
+  };
+
+  const handleDayClick = (day) => {
+    setSelectedDay(day);
+    setSelectedTime(null);
+  };
+
+  const handleTimeClick = (time) => {
+    setSelectedTime(time);
+  };
+
   return (
-    <div>
-      {/* Начните отсюда. Например, разметьте .page, добавьте шапку,
-            основную область, подвал. */}
+    <div className="page">
+      <Header />
+      <main className="main-booking-flow">
+        <h1 className="booking-title">Выберите желаемое время</h1>
+        <div className="booking-cards">
+          <Calendar
+            year={currentYear}
+            month={currentMonth}
+            selectedDay={selectedDay}
+            onDayClick={handleDayClick}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+          />
+          <TimeSlots
+            slots={SLOTS}
+            selectedDay={selectedDay}
+            selectedTime={selectedTime}
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            onTimeClick={handleTimeClick}
+          />
+        </div>
+        <BottomBar
+          selectedDay={selectedDay}
+          selectedTime={selectedTime}
+          currentMonth={currentMonth}
+          currentYear={currentYear}
+        />
+      </main>
+      <Footer />
     </div>
   );
 }
