@@ -66,8 +66,8 @@
 
 // 1. ДАННЫЕ ------------------
 
-const TODAY = new Date(2025, 5, 15);
-
+const now = new Date();
+const TODAY = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 // Доступные слоты времени
 const SLOTS = [
     { time: "10:00", available: true},
@@ -98,9 +98,9 @@ const DAYS_OF_WEEK = [
 // 2. СОСТОЯНИЕ --------------------
 
 const state = {
-    currentMonth: 5,
-    currentYear: 2025,
-    selectedDay:15,
+    currentMonth: now.getMonth(),
+    currentYear: now.getFullYear(),
+    selectedDay:null,
     selectedTime: null,
 };
 
@@ -205,7 +205,7 @@ function renderCalendar(){
 function onDayClick(event){
     const btn = event.currentTarget;
     const day = parseInt(btn.getAttribute("data-day"));
-    const isOtherMonth = btn.getAttribute("data-other-month") === "true"
+    const isOtherMonth = btn.getAttribute("data-other-month") === "true";
 
     if (isOtherMonth) return;
 
@@ -222,9 +222,16 @@ function renderTimeSlots() {
   const timeContainer = document.getElementById("timeGrid");
   let html = "";
 
+  // Проверяем, выбрана ли валидная (доступная) дата
+  const isDaySelectable = state.selectedDay && isDateSelectable(state.selectedDay, state.currentMonth, state.currentYear);
+
   SLOTS.forEach((slot) => {
     const isSelected = state.selectedTime === slot.time;
-    const disabledAttr = slot.available ? "" : "disabled";
+    
+    // Слот заблокирован, если он занят ИЛИ день не выбран/в прошлом
+    const isSlotDisabled = !slot.available || !isDaySelectable;
+    
+    const disabledAttr = isSlotDisabled ? "disabled" : "";
     const activeClass = isSelected ? "active" : "";
 
     html += `
@@ -261,7 +268,16 @@ function onTimeSlotClick(event) {
 // Обновляет текст в нижней панели
 function updateBottomBar() {
   const confirmText = document.getElementById("confirmText");
+  const confirmBtn = document.querySelector(".confirm-btn");
   
+  // Если день не выбран, показываем заглушку и блокируем кнопку
+  if (!state.selectedDay) {
+    confirmText.textContent = "Выберите желаемую дату и время";
+    confirmText.classList.remove("has-value");
+    confirmBtn.disabled = true;
+    return;
+  }
+
   // Собираем дату
   const dateObj = new Date(state.currentYear, state.currentMonth, state.selectedDay);
   const dayOfWeek = DAYS_OF_WEEK[dateObj.getDay()];
@@ -270,10 +286,12 @@ function updateBottomBar() {
   let text = `${dayOfWeek}, ${state.selectedDay} ${monthName} ${state.currentYear}`;
 
   if (state.selectedTime) {
-    text += `  ${state.selectedTime}`;
+    text += ` • ${state.selectedTime}`;
     confirmText.classList.add("has-value");
+    confirmBtn.disabled = false; // Разблокируем кнопку, если есть время
   } else {
     confirmText.classList.remove("has-value");
+    confirmBtn.disabled = true; // Блокируем кнопку, если время не выбрано
   }
 
   confirmText.textContent = text;
@@ -290,7 +308,10 @@ function setupMonthNavigation() {
       state.currentMonth = 11;
       state.currentYear--;
     }
-    state.selectedDay = 1; 
+    
+    // Проверяем, доступно ли 1-е число нового месяца
+    const firstDayAvailable = isDateSelectable(1, state.currentMonth, state.currentYear);
+    state.selectedDay = firstDayAvailable ? 1 : null; 
     state.selectedTime = null;
     
     renderCalendar();
@@ -304,7 +325,9 @@ function setupMonthNavigation() {
       state.currentMonth = 0;
       state.currentYear++;
     }
-    state.selectedDay = 1; 
+
+    const firstDayAvailable = isDateSelectable(1, state.currentMonth, state.currentYear);
+    state.selectedDay = firstDayAvailable ? 1 : null; 
     state.selectedTime = null;
     
     renderCalendar();
@@ -319,12 +342,31 @@ function setupMonthNavigation() {
 
 function init() {
   // Первый рендер
+  const todayMonth = now.getMonth();
+  const todayYear = now.getFullYear();
+  const todayDate = now.getDate();
+
+  if (state.currentMonth === todayMonth && state.currentYear === todayYear) {
+    state.selectedDay = todayDate; // ИСПРАВЛЕНО: selectDay -> selectedDay
+  } else {
+    const firstDayAvailable = isDateSelectable(1, state.currentMonth, state.currentYear);
+    state.selectedDay = firstDayAvailable ? 1 : null;
+  }
+
   renderCalendar();
   renderTimeSlots();
   updateBottomBar();
 
   // Навигация по месяцам
   setupMonthNavigation();
+
+  // Обработчик кнопки "Далее"
+  const confirmBtn = document.querySelector(".confirm-btn");
+  confirmBtn.addEventListener("click", () => {
+    if (!state.selectedDay || !state.selectedTime) return;
+    
+    alert(`Вы записаны!\nДата: ${state.selectedDay} ${MONTHS_GENITIVE[state.currentMonth]} ${state.currentYear}\nВремя: ${state.selectedTime}`);
+  });
 }
 
 // Запуск после загрузки DOM
